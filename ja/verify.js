@@ -103,6 +103,7 @@ const COLLECT = (full) => {
     check("badge tooltip is Japanese", /クリックで内訳/.test(badgeTitle), badgeTitle);
     const segTitles = await page.$$eval(".bangermeter-badge .bangermeter-seg", s => s.map(x => x.title));
     check("badge C/E tooltips are Japanese", segTitles.length > 0 && segTitles.every(t => JA.test(t)), segTitles.join(" | "));
+    let sawVerified = false;
     const n = await page.$$eval(".bangermeter-badge", b => b.length);
     for (let i = 0; i < n; i++) {
       const bd = (await page.$$(".bangermeter-badge"))[i];
@@ -114,10 +115,15 @@ const COLLECT = (full) => {
         const t = await page.$eval(".bangermeter-panel", p => p.innerText);
         check("panel headings are Japanese", /内容の魅力度/.test(t) && /獲得した反応/.test(t), t.slice(0, 120));
         check("panel aria-label/close are Japanese", await page.$eval(".bangermeter-panel", p => /内訳/.test(p.getAttribute("aria-label")) && /閉じる/.test(p.querySelector(".bangermeter-panel-close").getAttribute("aria-label"))));
+        check("tier B: 'published weights actually say' bullets + closing paragraph are Japanese",
+          /投稿のリンクをコピーすると 20/.test(t) && /DMでシェアすると 5/.test(t) && /重みが掛かるのは「予測された確率」/.test(t) && /バンガー判定/.test(t), "");
+        check("tier B: no unfilled $N placeholders", !/\$\d/.test(t));
         check("source refs kept verbatim (param.rs)", /param\.rs/.test(await page.$eval(".bangermeter-panel", p => p.innerHTML + [...p.querySelectorAll("[title]")].map(e => e.title).join(""))));
       }
+      if (/認証済みアカウント: 2023年当時/.test(await page.$eval(".bangermeter-panel", p => p.innerText))) sawVerified = true;
       await page.keyboard.press("Escape"); await page.waitForTimeout(60);
     }
+    check("tier B: verified-author note is Japanese", sawVerified);
     // X's own DOM must be untouched: fixture tweet text has no Japanese added
     const tweetJa = await page.$$eval("article", a => a.map(x => [...x.querySelectorAll('[data-testid="tweetText"]')].map(t => t.innerText).join("")).join(""));
     check("X's own tweet text untouched", !/内容|スコア|リプライ件/.test(tweetJa));
@@ -169,6 +175,8 @@ const COLLECT = (full) => {
       record(strs.filter(s => !/^\s*$/.test(s)), f);
       const t = await page.evaluate(() => document.body.innerText);
       check(f + " is Japanese", JA.test(t));
+      if (f === "welcome.html") check("welcome: bold-split sentence reads naturally",
+        t.replace(/\s+/g, "").includes("29のランキング項目それぞれに「実測」「推定」「Xがゼロにした」のどれかを表示するので"), "");
       const aLeft = [...left.entries()].filter(([c, w]) => w === f && tierA.has(c)).map(e => e[0]);
       check(f + ": no tier A string left in English", aLeft.length === 0, aLeft.join(" | "));
     }

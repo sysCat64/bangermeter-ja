@@ -35,7 +35,7 @@ function parseCsv(text) {
 // Minimal JS scanner: yields {text, line, key} for every string literal,
 // skipping comments and regex literals. `key` is the property name before it.
 function jsStrings(src) {
-  const out = []; let i = 0, line = 1, prev = "", lastIdent = "";
+  const out = []; let i = 0, line = 1, prev = "", lastIdent = "", afterStr = false, plus = false;
   const n = src.length;
   while (i < n) {
     const c = src[i];
@@ -55,8 +55,13 @@ function jsStrings(src) {
         if (src[i] === "\n") line++;
         s += src[i++];
       }
-      i++; out.push({ text: s, line: start, key: lastIdent }); prev = '"'; continue;
+      i++;
+      if (afterStr && plus && out.length) out[out.length - 1].text += s;      // "a" + "b" is one sentence
+      else out.push({ text: s, line: start, key: lastIdent });
+      prev = '"'; afterStr = true; plus = false; continue;
     }
+    if (c === "+" && afterStr) { plus = true; i++; prev = c; continue; }
+    afterStr = false; plus = false;
     if (/[A-Za-z_$]/.test(c)) { let j = i; while (/[\w$]/.test(src[j] || "")) j++; lastIdent = src.slice(i, j); prev = "a"; i = j; continue; }
     prev = c; i++;
   }
@@ -99,6 +104,13 @@ function main() {
   const tr = createTranslator(dict);
   const ctx = new Set(Object.keys(dict.contextual || {}).map(norm));
   const pendingB = new Set(Object.keys(dict.pending || {}).map(norm));
+  const tierC = (dict.tierC || []).map(r => new RegExp(r));
+  // Literal fragments of sentences that a pattern translates as a whole count as covered.
+  // Group captures become "N"; numbers in a source fragment become "N" too.
+  const patternText = (dict.patterns || []).map(p => p.re
+    .replace(/\((?!\?:)(?:[^()\\]|\\.)*\)\??/g, "N").replace(/\\(.)/g, "$1")).join("\n");
+  const NUM = /[−-]?\d[\d.,]*/g;
+  const inPattern = t => t.length >= 6 && patternText.includes(t.replace(/^[▲▼·]\s+/, "").replace(NUM, "N"));
   const tier = new Map();
   parseCsv(fs.readFileSync(path.join(ROOT, "docs/ja/bangermeter-ja-strings.csv"), "utf8")).slice(1)
     .forEach(r => { if (r[4]) { const k = norm(r[4]); if (!tier.has(k) || r[0] < tier.get(k)) tier.set(k, r[0]); } });
@@ -109,8 +121,10 @@ function main() {
   for (const [f, isHtml] of files) {
     for (const c of candidates(f, isHtml)) {
       if (f === "weights.js" && c.key !== "label") continue;       // note / why / panel*: tier C
+      if (c.text.replace(/[^A-Za-z ]/g, " ").trim().split(/\s+/).length < 2 && c.key !== "label" && !isHtml) continue;   // lone fragments such as ", not"
       const k = f + "\0" + c.text; if (seen.has(k)) continue; seen.add(k);
-      if (tr.translate(c.text) != null || ctx.has(c.text) || /^\W+$/.test(c.text)) { res.OK++; continue; }
+      if (tierC.some(r => r.test(c.text))) { res["C-skip"]++; continue; }
+      if (tr.translate(c.text) != null || ctx.has(c.text) || inPattern(c.text) || /^\W+$/.test(c.text)) { res.OK++; continue; }
       const t = pendingB.has(c.text) ? "B" : tier.get(c.text);
       if (t === "C") res["C-skip"]++;
       else if (t === "B") res["B-pending"].push(c);
@@ -119,6 +133,7 @@ function main() {
     }
   }
   const show = (name, list) => { if (!list.length) return; console.log("\n" + name + " (" + list.length + ")"); list.forEach(c => console.log("  " + c.file + ":" + c.line + "  " + c.text.slice(0, 150))); };
+  if (process.argv.includes("--dump-new")) { console.log(JSON.stringify(res.NEW.map(c => [c.line, c.text]))); return; }
   show("A-MISSING — tier A string no longer covered", res["A-MISSING"]);
   show("NEW — not in the CSV snapshot and not translated", res.NEW);
   if (showAll) show("B-pending — tier B, not translated yet", res["B-pending"]);

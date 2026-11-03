@@ -21,6 +21,8 @@
 
   var MARK_RE = /^([▲▼·])\s+([\s\S]+)$/;
   var WS_RE = /^(\s*)([\s\S]*?)(\s*)$/;
+  var CJK_START = /^[\u3000-\u30ff\u4e00-\u9fff\uff00-\uffef]/;
+  var CJK_END = /[\u3000-\u30ff\u4e00-\u9fff\uff00-\uffef]$/;
 
   function norm(s) { return s.replace(/\s+/g, " ").trim(); }
 
@@ -61,9 +63,13 @@
       var ws = WS_RE.exec(str);
       var c = norm(ws[2]);
       var res = null;
-      if (c && /[A-Za-z]/.test(c)) {
+      if (c && (/[A-Za-z]/.test(c) || Object.prototype.hasOwnProperty.call(exact, c))) {
         var t = core(c);
-        if (t != null) res = ws[1] + t + ws[3];
+        if (t != null) {
+          // No stray spaces next to Japanese text (they come from the English
+          // markup around inline tags, e.g. "<b>x</b> to save ...").
+          res = (CJK_START.test(t) ? "" : ws[1]) + t + (CJK_END.test(t) ? "" : ws[3]);
+        }
       }
       if (cache.size > 4000) cache.clear();
       cache.set(str, res);
