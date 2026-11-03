@@ -1,0 +1,381 @@
+{
+ "_readme": "Translation dictionary. exact: normalized-whitespace full-string matches. patterns: regex over the whole string; $N = capture, 'tr' lists captures to translate recursively. A leading ▲/▼/· mark is stripped before lookup. See _glossary for fixed terms.",
+ "_glossary": {
+  "Content score": "内容スコア",
+  "Engagement score": "反応スコア",
+  "For You": "おすすめ",
+  "out-of-network": "フォロー外",
+  "in-network": "フォロー内",
+  "dwell": "滞在",
+  "post / tweet": "投稿",
+  "reply": "リプライ",
+  "repost": "リポスト",
+  "quote": "引用",
+  "like": "いいね",
+  "bookmark": "ブックマーク",
+  "share": "シェア",
+  "follow": "フォロー",
+  "view(s)": "表示回数",
+  "thread": "スレッド",
+  "hashtag": "ハッシュタグ",
+  "link": "リンク",
+  "image / picture": "画像",
+  "video": "動画",
+  "Community Note": "コミュニティノート",
+  "Verified": "認証済み",
+  "weight": "重み",
+  "badge": "バッジ",
+  "breakdown": "内訳",
+  "draft": "下書き",
+  "compare / variant": "比較 / 案",
+  "mute": "ミュート",
+  "block": "ブロック",
+  "report": "報告",
+  "typical post": "標準的な投稿",
+  "median": "中央値",
+  "banger（Grokのbanger pipeline）": "バンガー判定（Grok）。文中では「バンガー判定」で統一",
+  "Phoenix / Grok / Under the Hood / param.rs": "原文のまま"
+ },
+ "exact": {
+  "Bangermeter — click for breakdown, click again to close": "Bangermeter — クリックで内訳を表示、もう一度クリックで閉じる",
+  "Content score (prospective)": "内容スコア（投稿前の見込み）",
+  "Engagement score — low view sample, smoothed toward median": "反応スコア — 表示回数が少ないため、中央値に寄せて補正しています",
+  "Engagement score (how the weights value actual engagement)": "反応スコア（実際の反応を重みでどう評価するか）",
+  "Asks a question — invites replies, the algorithm's favorite signal": "質問になっている — リプライを呼ぶ、アルゴリズムが最も好むシグナル",
+  "Meaty text — gives people a conversation to click into": "読みごたえのある文章 — 会話の中に入りたくなる",
+  "Starts a thread — keeps readers on the post longer": "スレッドの始まり — 読者が投稿に長く留まる",
+  "Has a picture — small boost to likes": "画像あり — いいねがわずかに増える",
+  "Has video — watches barely count (0.05, and nothing under 10 seconds)": "動画あり — 再生はほとんど加点されない（0.05、10秒未満はゼロ）",
+  "Contains a link — opening it pays 0.2, small but not zero": "リンクあり — 開かれると0.2加点（小さいがゼロではない）",
+  "Mostly just a link — low-context link posts do worse": "ほぼリンクだけ — 文脈の少ないリンク投稿は不利",
+  "3+ hashtags — the old algorithm flags hashtag piles": "ハッシュタグ3つ以上 — 旧アルゴリズムはハッシュタグの羅列にフラグを立てる",
+  "“Like if…” bait — invites “show less” clicks and penalties": "「いいねしたら…」系の誘導 — 「表示を減らす」クリックとペナルティを招く",
+  "MOSTLY CAPS — reads as shouting, invites negative feedback": "英字の大半が大文字 — 叫んでいるように読め、否定的な反応を招く",
+  "Out-of-network view assumed": "フォロー外として表示される想定",
+  "Out-of-network view assumed — scored at 75%": "フォロー外として表示される想定 — 75%で評価",
+  "In-network reply": "フォロー内のリプライ",
+  "This is a reply — replies take the same 75% discount as out-of-network posts": "これはリプライ — リプライはフォロー外の投稿と同じ75%に割り引かれる",
+  "In-network repost": "フォロー内のリポスト",
+  "This is a repost — reposts take the same 75% discount as out-of-network posts": "これはリポスト — リポストはフォロー外の投稿と同じ75%に割り引かれる",
+  "Community Note attached — future engagement suppressed ~50% (three causal studies)": "コミュニティノートあり — 今後の反応が約50%抑えられる（3件の因果研究）",
+  "Community-noted ×0.5": "コミュニティノート付き ×0.5",
+  "Out-of-network / reply / repost ×0.75": "フォロー外／リプライ／リポスト ×0.75",
+  "Topic-request OON ×0.5": "トピック指定のフォロー外 ×0.5",
+  "New-user OON ×0.00001": "新規ユーザー向けフォロー外 ×0.00001",
+  "Author diversity decay": "投稿者の多様性による減衰",
+  "Verified author boost": "認証済みアカウントの加点",
+  "Bookmarks": "ブックマーク",
+  "Bangermeter score breakdown": "Bangermeter スコアの内訳",
+  "Close breakdown": "内訳を閉じる",
+  "Content appeal": "内容の魅力度",
+  "What the algorithm would predict from the content alone. 50 = a typical post.": "内容だけからアルゴリズムが予測する値。50 = 標準的な投稿。",
+  "No special signals — scored as a typical post.": "特別なシグナルなし — 標準的な投稿として評価",
+  "Reply scoring": "リプライの評価",
+  "Earned engagement": "獲得した反応",
+  "— the baseline unit": "— 基準単位",
+  "— not a scored action — X publishes no bookmark weight": "— スコア対象の行動ではない — Xはブックマークの重みを公開していない",
+  "Can't score this one — the view count isn't visible, so there's nothing to compute rates from.": "この投稿はスコアを出せません — 表示回数が見えないため、率を計算する材料がありません。",
+  "Show the math": "計算式を見る",
+  "About these scores": "このスコアについて",
+  "What X's published weights actually say": "Xが公開した重みが実際に語ること",
+  "+ compare": "+ 比較",
+  "Reply ×0.75": "リプライ ×0.75",
+  "pasted text": "貼り付けあり",
+  "Save this draft's score as a variant (up to three). Rewrite, then compare the saved scores side by side. Variants live in memory only and vanish with the page.": "この下書きのスコアを案として保存します（最大3つ）。書き直してから、保存したスコアを並べて比べられます。案はメモリ上だけに置かれ、ページを閉じると消えます。",
+  "Asks a question": "質問している",
+  "Substantive text (≥100 chars)": "しっかりした文章量（100文字以上）",
+  "Thread starter": "スレッドの始まり",
+  "Has image": "画像あり",
+  "Has video": "動画あり",
+  "External link": "外部リンク",
+  "Bare link (little text)": "リンクだけ（文章が少ない）",
+  "3+ hashtags": "ハッシュタグ3つ以上",
+  "Engagement-bait phrasing": "反応誘導の言い回し",
+  "Mostly ALL-CAPS": "英字の大半が大文字",
+  "Likes": "いいね",
+  "Replies": "リプライ",
+  "Reposts": "リポスト",
+  "Quotes": "引用",
+  "Shares": "シェア",
+  "Share via DM": "DMでシェア",
+  "Share via copy link": "リンクをコピーしてシェア",
+  "Follow author": "投稿者をフォロー",
+  "Post click": "投稿のクリック",
+  "Open link": "リンクを開く",
+  "Photo expand": "写真の拡大",
+  "Video open": "動画を開く",
+  "Quoted-post click": "引用元投稿のクリック",
+  "Post unexplored": "未接触の投稿（新規性）",
+  "React with video": "動画で反応",
+  "Dwell time": "滞在時間",
+  "Dwell (binary)": "滞在（有無）",
+  "Click dwell": "クリック後の滞在",
+  "Video continuation": "動画の継続視聴",
+  "User video continuation": "ユーザーの動画継続視聴",
+  "Profile click": "プロフィールのクリック",
+  "Profile visit time": "プロフィール滞在時間",
+  "Video quality view": "動画の有効視聴",
+  "Quoted video quality view": "引用元動画の有効視聴",
+  "Not interested": "興味なし",
+  "Block author": "投稿者をブロック",
+  "Mute author": "投稿者をミュート",
+  "Report": "報告",
+  "Not dwelled": "素通り（滞在なし）",
+  "Carousel video open": "カルーセル動画を開く",
+  "Carousel immersive view": "カルーセルの没入表示",
+  "Carousel open × immersive dwell": "カルーセルを開く × 没入滞在",
+  "Scores posts with X's published For You ranking weights and the real scorer arithmetic (xai-org/x-algorithm, Aug 13 2026).": "Xが公開したおすすめ（For You）のランキング重みと、実際のスコア計算式で投稿を採点します（xai-org/x-algorithm、2026年8月13日時点）。",
+  "New here? How to use it →": "はじめての方へ：使い方 →",
+  "Hide this": "閉じる",
+  "Hide this tip": "このヒントを閉じる",
+  "Settings": "設定",
+  "Score badges on timeline tweets": "タイムラインの投稿にスコアバッジを表示",
+  "Live meter in compose box": "投稿作成欄にリアルタイムメーターを表示",
+  "Apply the ×0.75 out-of-network multiplier as if the viewer does not follow the author": "閲覧者が投稿者をフォローしていないものとして、フォロー外の×0.75を適用します",
+  "Assume out-of-network view (×0.75)": "フォロー外として見たと仮定（×0.75）",
+  "Score as if the viewer mutually follows the author. X pays 20.0 instead of 5.0 for a reply in that case (BidirectionalFollowReplyWeightBoost = 15.0) — but only on original posts, never on replies or reposts.": "閲覧者と投稿者が相互フォローしているものとして採点します。その場合、リプライの重みは5.0ではなく20.0になります（BidirectionalFollowReplyWeightBoost = 15.0）。ただし対象は元の投稿だけで、リプライやリポストには適用されません。",
+  "Assume mutual follow (reply 5.0 → 20.0)": "相互フォローと仮定（リプライ 5.0 → 20.0）",
+  "Simulate the 2023-era verified boost (×4 in-network / ×2 out-of-network, archived commit ec83d01dca). No such multiplier exists in the Aug 2026 release — off by default because it floors every verified author near the top of the scale.": "2023年当時の認証アカウント加点（フォロー内×4／フォロー外×2、アーカイブ済みコミット ec83d01dca）を再現します。2026年8月版にはこの倍率は存在しません。認証済みアカウントがすべて上限付近に張り付いてしまうため、初期設定ではオフです。",
+  "2023 verified boost (×4/×2, historical)": "2023年の認証加点（×4/×2、過去の仕様）",
+  "Off by default. When on, the score is logged each time you open a breakdown panel, so you can compare formats over time. Stored only in this browser (chrome.storage.local, capped at 200 entries) — never synced, never sent anywhere.": "初期設定ではオフです。オンにすると、内訳パネルを開くたびにスコアを記録し、投稿の型ごとの違いを時間をかけて比べられます。このブラウザ内（chrome.storage.local、最大200件）だけに保存され、同期も外部送信もされません。",
+  "Keep local score history": "スコア履歴をこのブラウザに保存",
+  "Panel and draft-meter theme. Auto follows X's own theme (default / dim / lights out).": "パネルと下書きメーターのテーマです。「自動」はXのテーマ（ライト／ダークブルー／ブラック）に合わせます。",
+  "Panel theme": "パネルのテーマ",
+  "Auto (match X)": "自動（Xに合わせる）",
+  "Light": "ライト",
+  "Dark": "ダーク",
+  "Recent scores": "最近のスコア",
+  "Delete the local score history. This cannot be undone.": "保存したスコア履歴を削除します。元に戻せません。",
+  "Clear": "クリア",
+  "Logged when you open a breakdown panel. Local to this browser only.": "内訳パネルを開いたときに記録されます。このブラウザ内だけに保存されます。",
+  "Under the Hood": "Under the Hood（可視性レポート）",
+  "Remove": "削除",
+  "Import report JSON…": "レポートJSONを読み込む…",
+  "Active weight set": "使用中の重みセット",
+  "(no text)": "（本文なし）",
+  "period unknown": "期間不明",
+  "No visibility-impacting labels in this report period. Clean month.": "このレポート期間に、可視性に影響するラベルはありません。問題のない月でした。",
+  "That file is over 2 MB — an Under the Hood report is a few KB. Not imported.": "このファイルは2 MBを超えています。Under the Hoodのレポートは数KBです。読み込みませんでした。",
+  "zeroed by X": "Xがゼロにした",
+  "from counts": "実際の件数から",
+  "estimated": "推定",
+  "viewer-specific": "閲覧者ごとに異なる",
+  "measured": "実測",
+  "Bangermeter — Quick Start": "Bangermeter — クイックスタート",
+  "Bangermeter is installed.": "Bangermeterをインストールしました。",
+  "Three things and you're using it.": "3つのことだけで、すぐ使えます。",
+  "Scroll x.com": "x.comをスクロール",
+  "Every post picks up a badge with two numbers, 0–100.": "すべての投稿に、0〜100の2つの数字が入ったバッジが付きます。",
+  "Looks like": "表示例",
+  "— what the content alone would be predicted to earn": "— 内容だけから予測される値",
+  "— what the post actually earned, per view": "— 投稿が実際に獲得した値（表示1回あたり）",
+  "50 is a typical post.": "50は標準的な投稿です。",
+  "It's a comparison against a median post, not a grade — and not a prediction of reach.": "中央値の投稿との比較であって、成績でも、リーチの予測でもありません。",
+  "Open x.com →": "x.comを開く →",
+  "Click a badge": "バッジをクリック",
+  "You get the breakdown in plain English: which signals fired, what each reply and repost is actually worth, and what age cost it.": "内訳がやさしい言葉で表示されます。どのシグナルが働いたか、リプライやリポスト1件が実際にどれだけの価値か、投稿の古さでどれだけ減ったか。",
+  "Every number is cited to the line of X's published code it came from.": "すべての数字に、出どころとなったXの公開コードの行が示されています。",
+  "“Show the math”": "「計算式を見る」",
+  "on any section opens the full weight × probability table.": "を各セクションで開くと、重み×確率の表がすべて表示されます。",
+  "Start typing a post": "投稿を書き始める",
+  "A live meter scores your draft as you write, and names what's helping and what isn't — asks a question, substantive text, bare link, hashtag pile, engagement bait.": "書いている間、下書きをリアルタイムで採点し、何がプラスで何がマイナスかを示します。質問になっている、しっかりした文章量、リンクだけ、ハッシュタグの羅列、反応誘導など。",
+  "Hit": "",
+  "to save up to three variants and pick the best one before you send it. Replies are scored as replies.": "を押すと、最大3つの案を保存して、送信前にいちばん良いものを選べます。リプライはリプライとして採点されます。",
+  "One thing worth knowing": "知っておきたいこと",
+  "The weights are X's. The probabilities are estimates.": "重みはXのものですが、確率は推定です。",
+  "Only likes, replies and reposts come from real counts — the rest is inferred from the post. The popup labels all 29 ranking heads as": "実際の件数に基づくのは、いいね・リプライ・リポストだけです。残りは投稿から推測しています。ポップアップでは、29あるランキング項目のすべてを",
+  ",": "、",
+  ", or": "、",
+  ", so you always know which is which.": "のいずれかで表示するので、どれがどれか、いつでもわかります。",
+  "Settings, the full weight table and your score history live behind the toolbar icon — click the": "設定、重みの全表、スコア履歴は、ツールバーのアイコンから開けます。いつでも",
+  "Bangermeter icon any time.": "Bangermeterのアイコンをクリックしてください。",
+  "How it works": "しくみ",
+  "The research": "調査資料",
+  "Source on GitHub": "GitHubのソース",
+  "Bangermeter": "Bangermeter",
+  "View count not visible — cannot derive engagement rates.": "表示回数が見えません — 反応率を算出できません。"
+ },
+ "patterns": [
+  {
+   "re": "^Verified author — ×(\\S+) boost per 2023 code \\(absent from the 2026 release\\)$",
+   "ja": "認証済みアカウント — 2023年のコードでは×$1の加点（2026年版には存在しない）"
+  },
+  {
+   "re": "^Verified author ×(\\S+) \\(2023 code, absent from the 2026 release\\)$",
+   "ja": "認証済みアカウント ×$1（2023年のコード、2026年版には存在しない）"
+  },
+  {
+   "re": "^Bangermeter draft score (\\d+) out of 100$",
+   "ja": "Bangermeter 下書きスコア $1 / 100"
+  },
+  {
+   "re": "^(“.*”) Click to remove this saved variant\\.$",
+   "ja": "$1\nクリックでこの保存した案を削除"
+  },
+  {
+   "re": "^(\\d+)K followers$",
+   "ja": "フォロワー$1K"
+  },
+  {
+   "re": "^How the algorithm values what this post actually earned, from ([\\d,]+) views\\. 50 = the median rate measured across (\\d+) real timeline posts\\.$",
+   "ja": "この投稿が実際に獲得した反応をアルゴリズムがどう評価するか（表示 $1 回）。50 = 実際のタイムライン投稿 $2 件で測った中央値の率。"
+  },
+  {
+   "re": "^([\\d,]+) (?:reply|replies)$",
+   "ja": "リプライ $1 件"
+  },
+  {
+   "re": "^([\\d,]+) (?:repost|reposts)$",
+   "ja": "リポスト $1 件"
+  },
+  {
+   "re": "^([\\d,]+) (?:like|likes)$",
+   "ja": "いいね $1 件"
+  },
+  {
+   "re": "^([\\d,]+) (?:bookmark|bookmarks)$",
+   "ja": "ブックマーク $1 件"
+  },
+  {
+   "re": "^— each worth (\\S+) (?:like|likes) \\(mutual-follow boost on\\)$",
+   "ja": "— 1件あたり いいね $1 件分（相互フォロー加点オン）"
+  },
+  {
+   "re": "^— each worth (\\S+) (?:like|likes)$",
+   "ja": "— 1件あたり いいね $1 件分"
+  },
+  {
+   "re": "^Weight (\\S+) vs (\\S+) for a like \\(param\\.rs, (\\S+) sync\\)\\. A ratio of coefficients on same-denominator rates — meaningful inside this score, and only here\\. X warns that weight ratios are NOT count equivalences in general; see the fine print below\\.$",
+   "ja": "重み $1（いいねは $2）（param.rs、$3 同期）。分母が同じ率にかかる係数の比で、このスコアの中でだけ意味を持ちます。Xは、重みの比は一般には件数の換算ではないと警告しています。下の注記を参照してください。"
+  },
+  {
+   "re": "^Weight (\\S+) \\(param\\.rs, (\\S+) sync\\)$",
+   "ja": "重み $1（param.rs、$2 同期）"
+  },
+  {
+   "re": "^(.+?) · w (\\S+) × P (\\S+)$",
+   "ja": "$1  ·  w $2 × P $3",
+   "tr": [
+    1
+   ]
+  },
+  {
+   "re": "^(.+?) · w (\\S+) × (\\S+) s predicted$",
+   "ja": "$1  ·  w $2 × $3 秒（予測）",
+   "tr": [
+    1
+   ]
+  },
+  {
+   "re": "^Freshness: ×(\\S+) at (.+?) old — posts fade over ~6 hours, never below ×0\\.60$",
+   "ja": "鮮度: ×$1（投稿から $2）— 投稿は約6時間かけて薄れ、×0.60を下回りません",
+   "tr": [
+    2
+   ]
+  },
+  {
+   "re": "^(\\d+) min$",
+   "ja": "$1分"
+  },
+  {
+   "re": "^([\\d.]+) h$",
+   "ja": "$1時間"
+  },
+  {
+   "re": "^Posting cadence: post #(\\d+) from this author in the loaded stretch of feed — production attenuates it ×(\\S+) \\(author diversity\\)$",
+   "ja": "投稿頻度: 読み込み済みのフィードで、この投稿者の$1本目 — 本番では×$2に減衰します（投稿者の多様性）"
+  },
+  {
+   "re": "^In the pilot\\? Download your visibility report from (.+?) and import it here\\. Parsed locally, stored only in this browser\\. The report is monthly per-label totals — it can say how many posts carried a label, never which ones\\.$",
+   "ja": "パイロットに参加中の方へ: $1 から可視性レポートをダウンロードして、ここに読み込めます。解析はこの端末内だけで行われ、このブラウザにのみ保存されます。レポートは月ごとのラベル別の合計で、ラベルが付いた投稿の数はわかりますが、どの投稿かはわかりません。"
+  },
+  {
+   "re": "^Your imported report \\((.+?), (\\d+) posts\\)\\. These are X's OWN labels on your account — not estimates\\.$",
+   "ja": "読み込んだレポート（$1、$2 件の投稿）。これはあなたのアカウントにXが実際に付けたラベルで、推定ではありません。",
+   "tr": [
+    1
+   ]
+  },
+  {
+   "re": "^Your imported report \\((.+?)\\)\\. These are X's OWN labels on your account — not estimates\\.$",
+   "ja": "読み込んだレポート（$1）。これはあなたのアカウントにXが実際に付けたラベルで、推定ではありません。",
+   "tr": [
+    1
+   ]
+  },
+  {
+   "re": "^That file does not look like an Under the Hood report \\(expected the JSON downloaded from (.+?)\\)\\. Nothing was imported\\.$",
+   "ja": "このファイルはUnder the Hoodのレポートではないようです（$1 からダウンロードしたJSONが必要です）。何も読み込みませんでした。"
+  },
+  {
+   "re": "^(.+) \\(not in the public allowlist\\)$",
+   "ja": "$1（公開許可リストにない）"
+  },
+  {
+   "re": "^(\\d+) days?( \\(.+%\\))?$",
+   "ja": "$1日$2"
+  },
+  {
+   "re": "^(\\d+) posts( \\(.+%\\))?$",
+   "ja": "$1 件の投稿$2"
+  },
+  {
+   "re": "^reply$",
+   "ja": "リプライ"
+  },
+  {
+   "re": "^Only ([\\d,]+) views — rates are smoothed toward the median \\(empirical Bayes, K=([\\d,]+)\\), so small samples can't spike or tank the score\\.$",
+   "ja": "表示回数は $1 回だけ — 率は中央値に寄せて補正されます（経験ベイズ、K=$2）。サンプルが少なくても、スコアが跳ね上がったり急落したりしません。"
+  }
+ ],
+ "contextual": {
+  "Verified": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "Verified author — ×": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "boost per 2023 code (absent from the 2026 release)": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "Verified author × (2023 code, absent from the 2026 release)": "Source-code form; the rendered label has the factor filled in and is covered by a pattern.",
+  "each worth": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "likes (mutual-follow boost on)": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "s predicted": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "the baseline unit": "Rendered as '— the baseline unit' (exact entry with the dash).",
+  "real timeline posts.": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "Weight": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "for a like (param.rs,": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "(param.rs,": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "sync)": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "Freshness: ×": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "▼ Posting cadence: post #": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "(author diversity)": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "” Click to remove this saved variant.": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "Bangermeter draft score": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "out of 100": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "In the pilot? Download your visibility report from": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "and import it here. Parsed locally, stored only in this browser.": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "The report is monthly per-label totals — it can say how many posts carried a": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "label, never which ones.": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "(not in the public allowlist)": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "Your imported report (": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "). These are X's OWN labels on your account — not estimates.": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "posts (": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "That file does not look like an Under the Hood report": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "(expected the JSON downloaded from": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "). Nothing was imported.": "Fragment of a sentence assembled in code; the full rendered sentence is covered by a pattern (see patterns).",
+  "(xai-org/x-algorithm at": "Fragment inside an English tooltip built around tier B/C text (weights.js note/why); the tooltip stays English by design.",
+  "applies the": "Fragment inside an English tooltip built around tier B/C text (weights.js note/why); the tooltip stays English by design.",
+  "Signals it is shown:": "Fragment inside an English tooltip built around tier B/C text (weights.js note/why); the tooltip stays English by design.",
+  "Raw:": "Fragment of the 'Show the math' fine print (tier B).",
+  "banger pipeline.": "Fragment inside an English tooltip built around tier B/C text (weights.js note/why); the tooltip stays English by design.",
+  "K followers": "Fragment inside an English tooltip built around tier B/C text (weights.js note/why); the tooltip stays English by design.",
+  "Bookmarks:": "scoring.js unweightedSignals label; not rendered anywhere in the current UI.",
+  "Verified author ×": "Fragment of the label built in scoring.js; the rendered label is covered by a pattern.",
+  "(2023 code, absent from the 2026 release)": "Fragment of the label built in scoring.js; the rendered label is covered by a pattern."
+ },
+ "pending": {
+  "views — rates are smoothed toward the median (empirical Bayes, K=": "tier B: engagement fine print (scoring.js); fragment of a sentence assembled in code.",
+  "), so small samples can't spike or tank the score.": "tier B: engagement fine print (scoring.js); fragment of a sentence assembled in code.",
+  "Scored from the three heads a browser can see: likes (": "tier B: engagement fine print (scoring.js); fragment of a sentence assembled in code.",
+  "), replies (": "tier B: engagement fine print (scoring.js); fragment of a sentence assembled in code.",
+  "), reposts (": "tier B: engagement fine print (scoring.js); fragment of a sentence assembled in code.",
+  "). The other": "tier B: engagement fine print (scoring.js); fragment of a sentence assembled in code.",
+  "heads — shares (2.0 / 5.0 / 20.0), follows (4.0), clicks, dwell time and the negatives (−0.02 to −234.0) — need Phoenix's predictions, not counts.": "tier B: engagement fine print (scoring.js); fragment of a sentence assembled in code."
+ }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "bangermeter-ja",
+  "private": true,
+  "description": "Japanese overlay tooling. Kept out of the repo root so upstream can add its own package.json.",
+  "scripts": { "build": "node build.js", "verify": "node verify.js", "check-missing": "node check-missing.js" },
+  "devDependencies": { "playwright": "^1.49.0" }
+}
