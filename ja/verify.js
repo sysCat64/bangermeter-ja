@@ -186,6 +186,8 @@ const COLLECT = (full) => {
       if (f === "welcome.html") {
         const h = await page.$eval(".step h2", e => e.innerText);
         check("welcome: first step heading shows lowercase x.com (no forced uppercase)", h === "x.comをスクロール", h);
+        const cta = await page.$eval(".cta", e => e.innerText);
+        check("welcome: CTA button shows lowercase x.com", cta === "x.comを開く →", cta);
       }
       if (f === "welcome.html") check("welcome: bold-split sentence reads naturally",
         t.replace(/\s+/g, "").includes("29のランキング項目それぞれに「実測」「推定」「Xがゼロにした」のどれかを表示するので"), "");

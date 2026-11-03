@@ -10,7 +10,7 @@
 | `ja/dict.json` | 翻訳辞書（用語集、固定文、正規表現パターン） |
 | `ja/ja-overlay.js` | 描画後のDOMを翻訳するスクリプト |
 | `ja/build.js` | `extension/` から `dist/` を生成 |
-| `ja/welcome-ja.css` | 初回ガイドの見出しの強制大文字（`x.com` → `X.COM`）を打ち消す小さなCSS。`build.js` が `dist/welcome.html` にだけ読み込ませる |
+| `ja/welcome-ja.css` | 初回ガイドの見出しと「x.comを開く」ボタンの強制大文字（`x.com` → `X.COM`）を打ち消す小さなCSS。`build.js` が `dist/welcome.html` にだけ読み込ませる |
 | `ja/serve-dist.js` | `dist/` を配信する（`verify.js` が使う。手動でfixtureを見たいときは `node ja/serve-dist.js`） |
 | `ja/check-missing.js` | 本家の新しい未翻訳文字列を検出 |
 | `ja/verify.js` | fixtureをChromeで描画して翻訳を自動検証 |
