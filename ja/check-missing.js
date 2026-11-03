@@ -14,7 +14,7 @@ const path = require("path");
 const { createTranslator } = require("./ja-overlay.js");
 
 const ROOT = path.resolve(__dirname, "..");
-const EXT = path.join(ROOT, "extension");
+const EXT = process.env.BMJA_EXT || path.join(ROOT, "extension");   // override only for self-tests
 const norm = s => s.replace(/\s+/g, " ").trim();
 
 function parseCsv(text) {
@@ -32,6 +32,9 @@ function parseCsv(text) {
   return rows;
 }
 
+// Where a string literal is clearly shown to the user even without a space in it:
+// x.textContent = "…", x.title = "…", setAttribute("aria-label", "…"), el(tag, cls, "…").
+const UI_BEFORE = /(?:\.(?:textContent|innerText|title|placeholder|alt|ariaLabel)\s*=\s*|setAttribute\(\s*["'](?:title|aria-label|placeholder)["']\s*,\s*|\bel\(\s*[^,()]+,\s*[^,()]+,\s*|\.createTextNode\(\s*)$/;
 // Minimal JS scanner: yields {text, line, key} for every string literal,
 // skipping comments and regex literals. `key` is the property name before it.
 function jsStrings(src) {
@@ -49,7 +52,7 @@ function jsStrings(src) {
       i++; while (/[a-z]/i.test(src[i] || "")) i++; prev = ")"; continue;
     }
     if (c === '"' || c === "'" || c === "`") {
-      const q = c, start = line; let s = ""; i++;
+      const q = c, start = line, sidx = i; let s = ""; i++;
       while (i < n && src[i] !== q) {
         if (src[i] === "\\") { const e = src[i + 1]; s += e === "n" ? "\n" : e === "t" ? "\t" : e === "u" ? (i += 5, String.fromCharCode(parseInt(src.slice(i - 3, i + 1), 16))) : e; i += 2; continue; }
         if (src[i] === "\n") line++;
@@ -57,7 +60,7 @@ function jsStrings(src) {
       }
       i++;
       if (afterStr && plus && out.length) out[out.length - 1].text += s;      // "a" + "b" is one sentence
-      else out.push({ text: s, line: start, key: lastIdent });
+      else out.push({ text: s, line: start, key: lastIdent, ui: UI_BEFORE.test(src.slice(Math.max(0, sidx - 120), sidx)) });
       prev = '"'; afterStr = true; plus = false; continue;
     }
     if (c === "+" && afterStr) { plus = true; i++; prev = c; continue; }
@@ -90,9 +93,9 @@ const CODEY = /^[#.\[:]|[{};]|=>|\bfunction\b|^https?:|^[\w-]+(\.[\w-]+)+$|^[\w.
 function candidates(file, isHtml) {
   const src = fs.readFileSync(path.join(EXT, file), "utf8");
   const raw = isHtml ? htmlStrings(src) : jsStrings(src);
-  return raw.map(r => ({ file, line: r.line, key: r.key, text: norm(r.text) }))
+  return raw.map(r => ({ file, line: r.line, key: r.key, ui: r.ui, text: norm(r.text) }))
     .filter(r => /[A-Za-z]{3}/.test(r.text) && r.text.length >= 3)
-    .filter(r => isHtml || r.key === "label" || (/\s/.test(r.text) && !CODEY.test(r.text) &&
+    .filter(r => isHtml || r.key === "label" || r.ui || (/\s/.test(r.text) && !CODEY.test(r.text) &&
       !/[<>\[\]]|^(use strict|noopener noreferrer)$/.test(r.text) &&
       (file !== "scoring.js" || r.text.split(" ").length >= 5)))      // scoring.js also holds multilingual keyword lists
     .filter(r => !isHtml || !CODEY.test(r.text) || /^[A-Z][a-z]+( [A-Za-z]+)*$/.test(r.text));
@@ -121,7 +124,7 @@ function main() {
   for (const [f, isHtml] of files) {
     for (const c of candidates(f, isHtml)) {
       if (f === "weights.js" && c.key !== "label") continue;       // note / why / panel*: tier C
-      if (c.text.replace(/[^A-Za-z ]/g, " ").trim().split(/\s+/).length < 2 && c.key !== "label" && !isHtml) continue;   // lone fragments such as ", not"
+      if (c.text.replace(/[^A-Za-z ]/g, " ").trim().split(/\s+/).length < 2 && c.key !== "label" && !c.ui && !isHtml) continue;   // lone fragments such as ", not"
       const k = f + "\0" + c.text; if (seen.has(k)) continue; seen.add(k);
       if (tierC.some(r => r.test(c.text))) { res["C-skip"]++; continue; }
       if (tr.translate(c.text) != null || ctx.has(c.text) || inPattern(c.text) || /^\W+$/.test(c.text)) { res.OK++; continue; }

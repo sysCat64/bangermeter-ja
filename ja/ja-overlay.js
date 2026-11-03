@@ -88,6 +88,8 @@
     var FULL = !!(script && script.hasAttribute("data-bm-ja-full"));
     var SCOPE = '[class^="bangermeter-"],[class*=" bangermeter-"]';
     var ATTRS = ["title", "aria-label", "placeholder"];
+    // Post text copied into the UI (history excerpts) is user content, never ours.
+    var EXCLUDE = ".hist-snippet";
     var debug = false;
     try { debug = root.localStorage.getItem("bmJaDebug") === "1"; } catch (e) { /* storage blocked */ }
     var missed = new Set();
@@ -105,8 +107,9 @@
     }
 
     function inScope(node) {
-      if (FULL) return true;
       var el = node.nodeType === 1 ? node : node.parentElement;
+      if (el && el.closest && el.closest(EXCLUDE)) return false;
+      if (FULL) return true;
       return !!(el && el.closest && el.closest(SCOPE));
     }
 
@@ -138,11 +141,11 @@
       if (rootEl.nodeType === 3) { doText(rootEl); return; }
       if (rootEl.nodeType !== 1) return;
       var tag = rootEl.nodeName;
-      if (tag === "SCRIPT" || tag === "STYLE") return;
+      if (tag === "SCRIPT" || tag === "STYLE" || rootEl.closest(EXCLUDE)) return;
       doAttrs(rootEl);
       var w = doc.createTreeWalker(rootEl, 1 | 4, {
         acceptNode: function (n) {
-          return (n.nodeType === 1 && (n.nodeName === "SCRIPT" || n.nodeName === "STYLE"))
+          return (n.nodeType === 1 && (n.nodeName === "SCRIPT" || n.nodeName === "STYLE" || n.matches(EXCLUDE)))
             ? 2 : 1;                                     // 2 = REJECT subtree
         }
       });

@@ -4,7 +4,8 @@
 //   node ja/verify.js --leftovers  also print every untranslated string seen
 const fs = require("fs");
 const path = require("path");
-const { execFileSync } = require("child_process");
+const { execFileSync, spawnSync } = require("child_process");
+const os = require("os");
 const { chromium } = require("playwright");
 const { build, DIST } = require("./build.js");
 const { start } = require("./serve-dist.js");
@@ -92,6 +93,16 @@ const COLLECT = (full) => {
     const st = tierAStatic(dict);
     check("tier A: all " + st.n + " complete strings are translated or listed as contextual", st.miss.length === 0, st.miss.slice(0, 5).join(" | "));
     if (st.miss.length) st.miss.forEach(m => console.log("   missing: " + m));
+
+    // 0b. check-missing must notice a new single-word UI label (self-test on a temp copy)
+    {
+      const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "bmja-ext-"));
+      fs.cpSync(path.join(ROOT, "extension"), tmp, { recursive: true });
+      fs.appendFileSync(path.join(tmp, "popup.js"), '\nvar b = document.createElement("button"); b.textContent = "Export";\n');
+      const r = spawnSync("node", [path.join(__dirname, "check-missing.js")], { env: { ...process.env, BMJA_EXT: tmp }, encoding: "utf8" });
+      check("check-missing flags a new single-word button label", r.status === 1 && /Export/.test(r.stdout), (r.stdout || "").slice(-200));
+      fs.rmSync(tmp, { recursive: true, force: true });
+    }
 
     const page = await browser.newPage({ viewport: { width: 1200, height: 1500 } });
     const errors = [];
@@ -193,6 +204,19 @@ const COLLECT = (full) => {
         t.replace(/\s+/g, "").includes("29のランキング項目それぞれに「実測」「推定」「Xがゼロにした」のどれかを表示するので"), "");
       const aLeft = [...left.entries()].filter(([c, w]) => w === f && tierA.has(c)).map(e => e[0]);
       check(f + ": no tier A string left in English", aLeft.length === 0, aLeft.join(" | "));
+    }
+    // 4b. user content in the popup (history excerpts) must never be translated
+    {
+      const hp = await browser.newPage();
+      await hp.addInitScript(() => { window.chrome = { storage: { sync: { get: (d, cb) => cb(d), set() {} },
+        local: { get: (d, cb) => cb(Object.assign({}, d, { bmHistory: [{ id: "1", t: Date.now(), s: "Clear", c: 50, e: 40 }, { id: "2", t: Date.now(), s: "Light", c: 50, e: null }] })), set() {}, remove() {} },
+        onChanged: { addListener() {} } }, runtime: { getURL: x => x }, tabs: { create() {} } }; });
+      await hp.goto(URL("popup.html")); await hp.waitForTimeout(500);
+      const sn = await hp.$$eval(".hist-snippet", e => e.map(x => x.textContent));
+      check("popup history excerpts (post text) are left untouched", sn.length === 2 && sn[0] === "Clear" && sn[1] === "Light", JSON.stringify(sn));
+      const clr = await hp.$eval("#clearHistory", e => e.textContent);
+      check("popup 'Clear' button itself is translated", clr === "クリア", clr);
+      await hp.close();
     }
     check("no page errors", errors.length === 0, errors.join(" | "));
 
