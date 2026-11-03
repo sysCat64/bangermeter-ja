@@ -181,6 +181,19 @@ const COLLECT = (full) => {
     check("draft meter stays Japanese across all " + total + " keystrokes", total > 20 && kept === total, bad.join(" "));
     const hintsNow = await page.$$eval(".bangermeter-meter-hints > span", s => s.map(x => x.textContent));
     check("draft hint chips translated (question / hashtags)", hintsNow.some(h => /質問/.test(h)) && hintsNow.some(h => /ハッシュタグ/.test(h)), hintsNow.join(" | "));
+    // full-width ？ and emoji ❓ must also trigger the question hint (build-time scoring.js patch)
+    for (const [label, tail] of [["full-width ？", "どう思いますか？"], ["emoji ❓", "どう思いますか❓"]]) {
+      await page.goto(URL("fixture-compose.html")); await page.waitForTimeout(1500);
+      await page.locator('[data-testid="tweetTextarea_1"]').click();
+      await page.keyboard.type("今年いちばん役に立ったと思うことは何ですか。教えてください、 " + tail);
+      await page.waitForTimeout(400);
+      const hs = await page.$$eval(".bangermeter-meter-hints > span", s => s.map(x => x.textContent));
+      check("draft ending in " + label + " shows '質問している'", hs.some(h => /質問している/.test(h)), hs.join(" | "));
+    }
+    await page.goto(URL("fixture-compose.html")); await page.waitForTimeout(1500);
+    await page.locator('[data-testid="tweetTextarea_1"]').click();
+    await page.keyboard.type(draft);
+    await page.waitForTimeout(200);
     // compare chip + its tooltip
     await page.click(".bangermeter-meter-save"); await page.waitForTimeout(80);
     const chipTitle = await page.$eval(".bangermeter-variant", c => c.title);

@@ -66,7 +66,11 @@ node ja/verify.js
 - **英語のまま残すもの（`tierC`）:** 「このスコアについて」の本文（`Weights: <日付> — …` の変更履歴など）と、コミュニティノートの出典（論文名と数値）です。Xの同期のたびに書き換わる、あるいは原文のまま引用すべき文なので、`dict.json` の `tierC` に正規表現で登録し、`check-missing.js` の対象から外しています。`weights.js` の `note` / `why` も英語のままです。
 - **まだ訳していないもの（`pending`）:** 計算式の注記（`Score = Σ…`、`Engagement rates = …`、`Scored from the three heads…`）と、一部のツールチップです。`dict.json` の `pending` に入れてあり、`node ja/check-missing.js --all` で一覧できます。
 - 数式やソースの参照（`param.rs` など）は原文のままです。
-- スコア判定ロジックの修正はこのフォークでは行いません（例：全角の「？」を質問として検出できない件は、本家へPRとして別途出す想定です）。
+- **ビルド時パッチ（暫定）:** 本家の `scoring.js` は `hasQuestion: /\?/.test(t)` で質問を判定するため、全角の「？」を検出できません。`extension/` は編集せず、`ja/build.js` が `dist/scoring.js` を生成するときだけ `/[?？❓❔⁉⁈]/` に置き換えます（全角と絵文字の疑問符も質問として扱う）。
+  - 置換対象の行が見つからないとビルド時に警告を出します（本家の書き方が変わった合図です。`ja/build.js` の `patchScoring` を見直してください）。
+  - 本家がすでに全角に対応していれば、置換は自動でスキップされます。
+  - **本家が修正したらこのパッチは不要になります。** そのときは `ja/build.js` の `patchScoring` と、`ja/verify.js` の全角「？」・絵文字「❓」のチェックを削除してください。本家へのPRは別途出す想定です。
+  - これ以外のスコア判定ロジックは変更しません。
 - Tampermonkey版（`bangermeter.user.js`）は `dist/` に含めません。
 
 ライセンスは本家（MIT）のままです。`LICENSE` は変更していません。

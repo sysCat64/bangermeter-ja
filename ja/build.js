@@ -4,6 +4,8 @@
 //   - ja-dict.js / ja-overlay.js (appended to the content script list)
 //   - manifest.json: name / description / action title
 //   - popup.html / welcome.html: <html lang="ja"> and the overlay <script>s
+//   - scoring.js: build-time patch so hasQuestion also detects full-width ？ and emoji ❓❔⁉⁈
+//     (see patchScoring; skipped if upstream already handles it, warns if the target line is gone)
 //   - welcome.html also gets ja-welcome.css (no forced uppercase on Japanese headings)
 const fs = require("fs");
 const path = require("path");
@@ -13,9 +15,28 @@ const SRC = path.join(ROOT, "extension");
 const DIST = path.join(ROOT, "dist");
 const SKIP = new Set(["bangermeter.user.js"]);        // Tampermonkey build: out of scope
 
+// Upstream's hasQuestion is /\?/.test(t), which misses full-width "？". Patch the
+// dist copy only; extension/ stays untouched. Remove once upstream fixes it.
+const QUESTION_OLD = "hasQuestion: /\\?/.test(t)";
+const QUESTION_NEW = "hasQuestion: /[?？❓❔⁉⁈]/.test(t)";
+function patchScoring(src) {
+  if (src.includes(QUESTION_OLD)) return { src: src.replace(QUESTION_OLD, () => QUESTION_NEW), status: "patched" };
+  const m = /hasQuestion:\s*(\/(?:[^\/\\\n]|\\.)*\/)/.exec(src);
+  if (m && /[？\uFF1F]/.test(m[1])) return { src, status: "upstream-ok" };
+  console.warn("WARNING: scoring.js hasQuestion patch target not found" +
+    (m ? " (found " + m[0] + ")" : "") +
+    " — upstream changed; review ja/build.js patchScoring and drop or update it.");
+  return { src, status: "missing" };
+}
+
 function build() {
   fs.rmSync(DIST, { recursive: true, force: true });
   fs.cpSync(SRC, DIST, { recursive: true, filter: s => !SKIP.has(path.basename(s)) });
+
+  const sp = path.join(DIST, "scoring.js");
+  const ps = patchScoring(fs.readFileSync(sp, "utf8"));
+  if (ps.status === "patched") fs.writeFileSync(sp, ps.src);
+  else if (ps.status === "upstream-ok") console.log("scoring.js: upstream already detects full-width ？, patch skipped");
 
   const dict = JSON.parse(fs.readFileSync(path.join(__dirname, "dict.json"), "utf8"));
   const payload = { exact: dict.exact, patterns: dict.patterns };
@@ -51,4 +72,4 @@ function build() {
 }
 
 if (require.main === module) build();
-module.exports = { build, DIST };
+module.exports = { build, DIST, patchScoring };
