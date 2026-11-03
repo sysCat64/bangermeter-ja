@@ -4,6 +4,7 @@
 //   - ja-dict.js / ja-overlay.js (appended to the content script list)
 //   - manifest.json: name / description / action title
 //   - popup.html / welcome.html: <html lang="ja"> and the overlay <script>s
+//   - welcome.html also gets ja-welcome.css (no forced uppercase on Japanese headings)
 const fs = require("fs");
 const path = require("path");
 
@@ -21,6 +22,7 @@ function build() {
   fs.writeFileSync(path.join(DIST, "ja-dict.js"),
     "self.BM_JA_DICT = " + JSON.stringify(payload) + ";\n");
   fs.copyFileSync(path.join(__dirname, "ja-overlay.js"), path.join(DIST, "ja-overlay.js"));
+  fs.copyFileSync(path.join(__dirname, "welcome-ja.css"), path.join(DIST, "ja-welcome.css"));
 
   const mpath = path.join(DIST, "manifest.json");
   const m = JSON.parse(fs.readFileSync(mpath, "utf8"));
@@ -39,6 +41,10 @@ function build() {
     const tags = '<script src="ja-dict.js"></script>\n<script src="ja-overlay.js" data-bm-ja-full></script>\n';
     if (!/<\/body>/i.test(html)) throw new Error(page + ": no </body>");
     html = html.replace(/<\/body>/i, tags + "</body>");
+    if (page === "welcome.html") {
+      if (!/<\/head>/i.test(html)) throw new Error(page + ": no </head>");
+      html = html.replace(/<\/head>/i, '<link rel="stylesheet" href="ja-welcome.css">\n</head>');
+    }
     fs.writeFileSync(p, html);
   }
   console.log("built dist/ (" + Object.keys(dict.exact).length + " exact, " + dict.patterns.length + " patterns)");

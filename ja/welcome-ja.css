@@ -1,0 +1,3 @@
+/* Loaded only by dist/welcome.html (see build.js), after the page's own <style>.
+   The original uppercases step headings; for "x.com" that renders "X.COM". */
+.step h2 { text-transform: none; }

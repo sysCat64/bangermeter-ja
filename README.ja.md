@@ -10,6 +10,8 @@
 | `ja/dict.json` | 翻訳辞書（用語集、固定文、正規表現パターン） |
 | `ja/ja-overlay.js` | 描画後のDOMを翻訳するスクリプト |
 | `ja/build.js` | `extension/` から `dist/` を生成 |
+| `ja/welcome-ja.css` | 初回ガイドの見出しの強制大文字（`x.com` → `X.COM`）を打ち消す小さなCSS。`build.js` が `dist/welcome.html` にだけ読み込ませる |
+| `ja/serve-dist.js` | `dist/` を配信する（`verify.js` が使う。手動でfixtureを見たいときは `node ja/serve-dist.js`） |
 | `ja/check-missing.js` | 本家の新しい未翻訳文字列を検出 |
 | `ja/verify.js` | fixtureをChromeで描画して翻訳を自動検証 |
 | `docs/ja/` | 引き継ぎ資料と文字列一覧CSV |
@@ -42,7 +44,7 @@ node ja/verify.js
 ```
 
 - **`merge`:** `extension/` を編集していないので、原理的にコンフリクトは起きません。
-- **`check-missing.js`:** 本家で追加・変更された、辞書にない表示文字列を一覧します。`NEW`（新規または文言変更）か `A-MISSING`（以前は訳せていた文字列）があると終了コード1で終わります。`--all` を付けると、未翻訳のtier B も一覧します。
+- **`check-missing.js`:** 本家で追加・変更された、辞書にない表示文字列を一覧します。`NEW`（新規または文言変更）か `A-MISSING`（以前は訳せていた文字列）があると終了コード1で終わります。`tierC` は常に除外され、`pending` と未翻訳のtier B は `--all` を付けたときだけ一覧されます。
 - **`verify.js`:** fixtureをChromeで描画し、バッジ、パネル、下書きメーター（1文字ごとに日本語が保たれるか）、ポップアップ、初回ガイドを確認します。`dist/` に対して本家の `run-tests.js` も実行します。システムにインストール済みのGoogle Chromeを使います。
 
 ### 辞書に追加するとき
@@ -56,9 +58,13 @@ node ja/verify.js
 
 ## 方針と範囲
 
-- 翻訳するのは tier A（バッジ、パネルの見出しと主要な文、下書きメーター、ポップアップ、初回ガイド、重みのラベル）と、tier B のうち「Xが公開した重みが実際に語ること」の箇条書きと結びの段落、認証済みアカウントの注記、下書きメーターのツールチップです。
-- リプライ向けの説明、コミュニティノートの出典、計算式の注記（`Score = Σ…`、`Engagement rates = …`）は、今は英語のままです（`dict.json` の `pending`）。
-- `weights.js` の `note` / `why`（tier C）は、Xの更新のたびに本家が書き換えるため、英語のまま残します。
+- **翻訳するもの:** tier A（バッジ、パネルの見出しと主要な文、下書きメーター、ポップアップ、初回ガイド、重みのラベル）と、tier B のうち次のものです。
+  - 「Xが公開した重みが実際に語ること」の箇条書きと結びの段落
+  - リプライ向けの説明（「リプライの評価」）
+  - 認証済みアカウントの注記
+  - 下書きメーターのツールチップ
+- **英語のまま残すもの（`tierC`）:** 「このスコアについて」の本文（`Weights: <日付> — …` の変更履歴など）と、コミュニティノートの出典（論文名と数値）です。Xの同期のたびに書き換わる、あるいは原文のまま引用すべき文なので、`dict.json` の `tierC` に正規表現で登録し、`check-missing.js` の対象から外しています。`weights.js` の `note` / `why` も英語のままです。
+- **まだ訳していないもの（`pending`）:** 計算式の注記（`Score = Σ…`、`Engagement rates = …`、`Scored from the three heads…`）と、一部のツールチップです。`dict.json` の `pending` に入れてあり、`node ja/check-missing.js --all` で一覧できます。
 - 数式やソースの参照（`param.rs` など）は原文のままです。
 - スコア判定ロジックの修正はこのフォークでは行いません（例：全角の「？」を質問として検出できない件は、本家へPRとして別途出す想定です）。
 - Tampermonkey版（`bangermeter.user.js`）は `dist/` に含めません。

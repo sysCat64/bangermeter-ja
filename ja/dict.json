@@ -200,7 +200,10 @@
   "Engagement only counts if the post reached the reader through their Home Timeline. Opening a link someone sent has no ranking impact — so passing your own post round a group chat does nothing for reach.": "反応が数えられるのは、投稿が読者のホームタイムライン経由で届いた場合だけです。誰かから送られたリンクを開いてもランキングには影響しません。自分の投稿をグループチャットに回しても、リーチは伸びません。",
   "Mass block/report campaigns don't straightforwardly bury a post. Predictions are per-viewer and personalized, so brigading mostly shifts what gets recommended to people like the brigaders.": "ブロックや報告を大量に集めても、投稿がそのまま埋もれるわけではありません。予測は閲覧者ごとに個別化されるため、組織的な攻撃が変えるのは、主に攻撃する側と似た人へのおすすめです。",
   "Verified author: 2023-era code boosted verified posts ×4 in-network / ×2 out-of-network. No such multiplier appears anywhere in the Aug 2026 release. Not applied to this score — enable “2023 verified boost” in the popup to simulate that era.": "認証済みアカウント: 2023年当時のコードでは、認証済みの投稿がフォロー内で×4、フォロー外で×2に加点されていました。2026年8月版には、こうした倍率はどこにも見当たりません。このスコアには適用していません。当時を再現するには、ポップアップで「2023年の認証加点」をオンにしてください。",
-  "This draft is a reply. In-network replies take the same ×0.75 rescoring factor as out-of-network posts (oon_applies, xai-value-model/scoring.rs) — already reflected in the score. Replies are also excluded from the mutual-follow reply boost and from Grok's banger pipeline.": "この下書きはリプライです。フォロー内のリプライも、フォロー外の投稿と同じ×0.75の再スコアリング係数を受けます（oon_applies、xai-value-model/scoring.rs）。この係数はすでにスコアに反映されています。リプライは、相互フォローのリプライ加点と、Grokのバンガー判定からも除外されます。"
+  "This draft is a reply. In-network replies take the same ×0.75 rescoring factor as out-of-network posts (oon_applies, xai-value-model/scoring.rs) — already reflected in the score. Replies are also excluded from the mutual-follow reply boost and from Grok's banger pipeline.": "この下書きはリプライです。フォロー内のリプライも、フォロー外の投稿と同じ×0.75の再スコアリング係数を受けます（oon_applies、xai-value-model/scoring.rs）。この係数はすでにスコアに反映されています。リプライは、相互フォローのリプライ加点と、Grokのバンガー判定からも除外されます。",
+  "Out-of-network, this reply never reaches For You at all — replies from unfollowed accounts are hard-filtered, not down-weighted.": "フォロー外の場合、このリプライはおすすめにそもそも届きません。フォローしていないアカウントからのリプライは、減点ではなく、機械的に除外されます。",
+  "Where this reply SORTS inside the thread is not something anyone outside X can score — that ranker is not open-sourced.": "このリプライがスレッド内でどの順に並ぶかは、X以外の誰にも採点できません。その並べ替えのしくみは公開されていないためです。",
+  "Replies are filtered out of X's Grok “banger” pipeline before it runs — it only ever evaluates original posts.": "リプライは、XのGrokのバンガー判定が動く前に除外されます。判定の対象は元の投稿だけです。"
  },
  "patterns": [
   {
@@ -405,6 +408,14 @@
   {
    "re": "^You pasted into this reply\\. X's reply-quality scorer is shown an is_pasted flag when scoring replies to accounts over (\\S+)K followers \\(grox/core/lm/thread\\.py\\)\\. What the withheld rubric does with it is unpublished — this chip is informational, and the score above does not move on it\\.$",
    "ja": "このリプライには貼り付けがありました。Xのリプライ品質スコアラーは、フォロワーが $1K を超えるアカウントへのリプライを採点するとき、is_pasted フラグを受け取ります（grox/core/lm/thread.py）。非公開の採点基準がそれをどう扱うかは公表されていません。このチップは参考表示で、上のスコアはこれでは動きません。"
+  },
+  {
+   "re": "^No mutual-follow boost here: the \\+(\\S+) reply boost needs an ORIGINAL post — replies are ineligible\\.$",
+   "ja": "ここには相互フォロー加点がありません。+$1 のリプライ加点は「元の投稿」にしか適用されず、リプライは対象外です。"
+  },
+  {
+   "re": "^Replying to an account over (\\S+)K followers\\? A Grok model scores the reply (\\S+)–(\\S+); a (\\S+) applies the (\\S+) label \\(duration unpublished\\)\\.$",
+   "ja": "フォロワーが $1K を超えるアカウントへのリプライでは、Grokのモデルがリプライを $2〜$3 で採点します。$4 だと $5 ラベルが付きます（期間は非公開）。"
   }
  ],
  "contextual": {
@@ -459,13 +470,7 @@
   "), reposts (": "tier B: engagement fine print (scoring.js); fragment of a sentence assembled in code.",
   "). The other": "tier B: engagement fine print (scoring.js); fragment of a sentence assembled in code.",
   "heads — shares (2.0 / 5.0 / 20.0), follows (4.0), clicks, dwell time and the negatives (−0.02 to −234.0) — need Phoenix's predictions, not counts.": "tier B: engagement fine print (scoring.js); fragment of a sentence assembled in code.",
-  "Community Note effect sourced from: X's own A/B test (25–34% fewer like/repost decisions), Chuai et al. Nature Communications (−61% subsequent reposts), Slaughter et al. PNAS (−46% reposts / −44% likes post-attach).": "Reply-scoring / Community Note explanation (tier B): not translated yet.",
-  "Out-of-network, this reply never reaches For You at all — replies from unfollowed accounts are hard-filtered, not down-weighted.": "Reply-scoring / Community Note explanation (tier B): not translated yet.",
-  "No mutual-follow boost here: the +15.0 reply boost needs an ORIGINAL post — replies are ineligible.": "Reply-scoring / Community Note explanation (tier B): not translated yet.",
   "bidirectional_boost_eligible requires in_reply_to_tweet_id to be none (bidirectional_boost_eligible, xai-value-model/inputs.rs).": "Reply-scoring / Community Note explanation (tier B): not translated yet.",
-  "K followers? A Grok model scores the reply": "Reply-scoring / Community Note explanation (tier B): not translated yet.",
-  "Where this reply SORTS inside the thread is not something anyone outside X can score — that ranker is not open-sourced.": "Reply-scoring / Community Note explanation (tier B): not translated yet.",
-  "Replies are filtered out of X's Grok “banger” pipeline before it runs — it only ever evaluates original posts.": "Reply-scoring / Community Note explanation (tier B): not translated yet.",
   "Score = Σ(weight × P) over the Phoenix heads, then offset_score (xai-value-model/scoring.rs), × rescorers, normalized so a median post = 50 (√ curve, capped at 100). Raw:": "Formula note: kept in English for now by decision (tier B, later).",
   "pseudo-views (empirical Bayes), then run through the same weighted-sum formula. Raw:": "Formula note: kept in English for now by decision (tier B, later)."
  },
@@ -479,6 +484,7 @@
   "switch that chose between them",
   "not predicted reach",
   "existed in the same code",
-  "when X deleted them"
+  "when X deleted them",
+  "^Community Note effect sourced from"
  ]
 }

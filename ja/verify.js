@@ -130,14 +130,22 @@ const COLLECT = (full) => {
 
     // 2. reply-surface fixture
     await page.goto(URL("a/status/123")); await page.waitForTimeout(1200);
+    let replyText = "";
     const bd = await page.$$(".bangermeter-badge");
     for (const b of bd) {
       await b.click().catch(() => {}); await page.waitForTimeout(100);
       await page.evaluate(() => document.querySelectorAll(".bangermeter-panel details").forEach(d => d.open = true));
       record(await page.evaluate(COLLECT, false), "thread panel");
+      const pt = await page.$eval(".bangermeter-panel", p => p.innerText).catch(() => "");
+      if (/リプライの評価/.test(pt)) replyText += pt;
       await page.keyboard.press("Escape");
     }
-    check("reply fixture: panel shows Japanese reply scoring", true);
+    check("reply scoring section: all 5 explanations are Japanese",
+      /フォロー外の場合、このリプライはおすすめにそもそも届きません/.test(replyText) &&
+      /相互フォロー加点がありません。\+15\.0/.test(replyText) &&
+      /Grokのモデルがリプライを 0〜3 で採点します/.test(replyText) &&
+      /並べ替えのしくみは公開されていない/.test(replyText) &&
+      /バンガー判定が動く前に除外されます/.test(replyText) && !/\$\d/.test(replyText), replyText.slice(0, 200));
 
     // 3. compose fixture: Japanese must persist on EVERY keystroke
     await page.goto(URL("fixture-compose.html")); await page.waitForTimeout(1800);
@@ -175,6 +183,10 @@ const COLLECT = (full) => {
       record(strs.filter(s => !/^\s*$/.test(s)), f);
       const t = await page.evaluate(() => document.body.innerText);
       check(f + " is Japanese", JA.test(t));
+      if (f === "welcome.html") {
+        const h = await page.$eval(".step h2", e => e.innerText);
+        check("welcome: first step heading shows lowercase x.com (no forced uppercase)", h === "x.comをスクロール", h);
+      }
       if (f === "welcome.html") check("welcome: bold-split sentence reads naturally",
         t.replace(/\s+/g, "").includes("29のランキング項目それぞれに「実測」「推定」「Xがゼロにした」のどれかを表示するので"), "");
       const aLeft = [...left.entries()].filter(([c, w]) => w === f && tierA.has(c)).map(e => e[0]);
